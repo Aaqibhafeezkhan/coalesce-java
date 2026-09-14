@@ -7,7 +7,6 @@ import net.bitsar.coalesce.demo.Mode;
 import net.bitsar.coalesce.demo.OrderDto;
 import net.bitsar.coalesce.demo.OrderService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.redisson.api.RedissonReactiveClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -32,8 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
         "demo.latency.std-dev-millis=0",
         "demo.latency.max-millis=200"
 })
-@EnabledIf("net.bitsar.coalesce.demo.integration.RedisAvailable#check")
-class MissedNotificationTest {
+class MissedNotificationTest extends RedisAvailable {
 
     @Autowired
     OrderService orders;

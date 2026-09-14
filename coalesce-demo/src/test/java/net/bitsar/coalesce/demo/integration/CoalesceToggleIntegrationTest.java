@@ -6,7 +6,6 @@ import java.util.UUID;
 import net.bitsar.coalesce.toggle.CoalesceToggle;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIf;
 import org.redisson.api.RedissonReactiveClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,8 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * real Redis, which is the only place that property is actually observable.
  */
 @SpringBootTest
-@EnabledIf("net.bitsar.coalesce.demo.integration.RedisAvailable#check")
-class CoalesceToggleIntegrationTest {
+class CoalesceToggleIntegrationTest extends RedisAvailable {
 
     private static final Duration LIMIT = Duration.ofSeconds(30);
 
