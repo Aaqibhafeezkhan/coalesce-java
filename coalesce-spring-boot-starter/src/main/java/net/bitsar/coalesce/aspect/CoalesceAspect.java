@@ -26,6 +26,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.convert.DurationStyle;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.HttpHeaders;
 import reactor.core.publisher.Flux;
@@ -54,6 +56,9 @@ public class CoalesceAspect {
      * Redis, it dies in the encoder.
      */
     private final int maxPayloadBytes;
+
+    @Value("${coalesce.poll-interval:200ms}")
+    private String pollInterval = "200ms";
 
     public CoalesceAspect(CoalesceCoordinator coordinator,
                           CoalesceCodec codec,
@@ -337,7 +342,9 @@ public class CoalesceAspect {
     }
 
     private Duration pollDelay() {
-        return Duration.ofMillis(200 + ThreadLocalRandom.current().nextInt(120)); // jittered
+        long intervalMillis = DurationStyle.detectAndParse(pollInterval).toMillis();
+        long jitterMillis = Math.max(1, intervalMillis * 3 / 5);
+        return Duration.ofMillis(intervalMillis + ThreadLocalRandom.current().nextLong(jitterMillis));
     }
 
     // ---------- key resolution ----------
