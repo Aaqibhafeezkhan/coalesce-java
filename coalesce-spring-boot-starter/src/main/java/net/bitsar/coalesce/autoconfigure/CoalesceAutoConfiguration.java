@@ -140,6 +140,6 @@ public class CoalesceAutoConfiguration {
                                          CoalesceToggle toggle,
                                          CoalesceProperties properties) {
         return new CoalesceAspect(coordinator, codec, metrics, keyResolver, attributeResolver,
-                toggle, properties.getMaxPayloadBytes());
+                toggle, properties.getMaxPayloadBytes(), properties.getPollInterval());
     }
 }

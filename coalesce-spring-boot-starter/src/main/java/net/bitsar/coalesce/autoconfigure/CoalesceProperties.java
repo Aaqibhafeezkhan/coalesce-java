@@ -32,6 +32,9 @@ public class CoalesceProperties {
      */
     private boolean active = true;
 
+    /** Base delay between follower polls. A 60% proportional jitter is added to this value. */
+    private Duration pollInterval = Duration.ofMillis(200);
+
     /**
      * Results larger than this are still returned to the caller but never written to Redis.
      * Redisson buffers every command in Netty's direct arena before the write, so a handful
@@ -56,6 +59,14 @@ public class CoalesceProperties {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public Duration getPollInterval() {
+        return pollInterval;
+    }
+
+    public void setPollInterval(Duration pollInterval) {
+        this.pollInterval = pollInterval;
     }
 
     public int getMaxPayloadBytes() {
