@@ -135,7 +135,7 @@ public class CoalesceAspect {
             if (active) {
                 return Optional.of(resolved);
             }
-            metrics.bypass();
+            metrics.bypass(resolved.namespace());
             return Optional.empty();
         });
     }
@@ -173,7 +173,7 @@ public class CoalesceAspect {
         return coordinator.fetchState(inv.key()).flatMap(state -> switch (state.status()) {
             case DONE -> serveDone(inv, state);
             case FAILED -> {
-                metrics.failedRetry();
+                metrics.failedRetry(inv.attrs().namespace());
                 yield acquireAndExecute(inv, false);
             }
             case ABSENT, PENDING -> acquireAndExecute(inv, false);
@@ -184,7 +184,7 @@ public class CoalesceAspect {
 
     private Mono<Object> serveDone(Invocation inv, CoalesceState state) {
         long ageMillis = System.currentTimeMillis() - state.computedAt();
-        metrics.cacheHit();
+        metrics.cacheHit(inv.attrs().namespace());
 
         if (ageMillis < inv.attrs().freshTtlMillis()) {
             return decode(inv, state); // fresh: nothing else happens
@@ -225,14 +225,14 @@ public class CoalesceAspect {
 
     private Mono<Object> runRefreshAware(Invocation inv, long lockId, boolean isRefresh) {
         if (isRefresh) {
-            metrics.backgroundRefresh();
+            metrics.backgroundRefresh(inv.attrs().namespace());
         }
         return runAsLeader(inv, lockId, isRefresh);
     }
 
     private Mono<Object> runAsLeader(Invocation inv, long lockId, boolean isRefresh) {
         Duration ttl = inv.attrs().staleTtl();
-        metrics.leaderExecution();
+        metrics.leaderExecution(inv.attrs().namespace());
 
         return invokeTarget(inv)
                 .map(Optional::of)
@@ -243,7 +243,7 @@ public class CoalesceAspect {
                         // Serve this caller, but do not put it in Redis. Caching it would
                         // risk the whole process for an entry that is too big to be worth
                         // sharing anyway.
-                        metrics.payloadTooLarge();
+                        metrics.payloadTooLarge(inv.attrs().namespace());
                         log.warn("not caching {}: payload is {} bytes, over the {} byte limit",
                                 inv.key(), payload.length, maxPayloadBytes);
                         return Mono.just(opt);
@@ -287,10 +287,10 @@ public class CoalesceAspect {
         return waitLoop(inv)
                 .timeout(inv.attrs().waitTimeout(),
                         Mono.defer(() -> {
-                            metrics.timeout();
+                            metrics.timeout(inv.attrs().namespace());
                             return Mono.error(new CoalesceTimeoutException(inv.key()));
                         }))
-                .doFinally(signal -> metrics.followerWait(System.currentTimeMillis() - startedAt));
+                .doFinally(signal -> metrics.followerWait(inv.attrs().namespace(), System.currentTimeMillis() - startedAt));
     }
 
     private Mono<Object> waitLoop(Invocation inv) {
@@ -321,9 +321,9 @@ public class CoalesceAspect {
                 .flatMap(acquired -> {
                     if (acquired) {
                         if (afterFailure) {
-                            metrics.failedRetry();
+                            metrics.failedRetry(inv.attrs().namespace());
                         } else {
-                            metrics.leaderTakeover();
+                            metrics.leaderTakeover(inv.attrs().namespace());
                         }
                         return runAsLeader(inv, lockId, false);
                     }

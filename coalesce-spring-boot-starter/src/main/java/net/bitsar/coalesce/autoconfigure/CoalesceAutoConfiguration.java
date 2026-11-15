@@ -49,7 +49,8 @@ public class CoalesceAutoConfiguration {
      *         coalescing is actually happening
      */
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean(value = CoalesceMetrics.class,
+            type = "io.micrometer.core.instrument.MeterRegistry")
     public CoalesceMetrics coalesceMetrics() {
         return new CoalesceMetrics();
     }
