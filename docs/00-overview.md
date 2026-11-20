@@ -50,6 +50,8 @@ next to it. See `02-aspect.md`, `coalesce()`.
   guarantees Redis Cluster does and does not give this design
 - `06-implementation-checklist.md`: build order for the POC, what to test, and known
   open decisions to make explicitly rather than by accident
+- `07-blocking-mvc-design.md`: proposed blocking facade, servlet header propagation,
+  thread model, and compatibility contract for Spring MVC
 
 ## Non-goals / explicit caveats to keep in mind while building
 
