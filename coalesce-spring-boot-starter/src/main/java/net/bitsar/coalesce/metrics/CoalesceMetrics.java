@@ -24,8 +24,16 @@ public class CoalesceMetrics {
         leaderExecutions.incrementAndGet();
     }
 
+    public void leaderExecution(String namespace) {
+        leaderExecution();
+    }
+
     public void cacheHit() {
         cacheHits.incrementAndGet();
+    }
+
+    public void cacheHit(String namespace) {
+        cacheHit();
     }
 
     public void followerWait(long millis) {
@@ -33,12 +41,24 @@ public class CoalesceMetrics {
         followerWaitMillisTotal.addAndGet(millis);
     }
 
+    public void followerWait(String namespace, long millis) {
+        followerWait(millis);
+    }
+
     public void backgroundRefresh() {
         backgroundRefreshes.incrementAndGet();
     }
 
+    public void backgroundRefresh(String namespace) {
+        backgroundRefresh();
+    }
+
     public void failedRetry() {
         failedRetries.incrementAndGet();
+    }
+
+    public void failedRetry(String namespace) {
+        failedRetry();
     }
 
     /** A waiter took the lock over after the previous leader's lease expired (crash recovery). */
@@ -46,8 +66,16 @@ public class CoalesceMetrics {
         leaderTakeovers.incrementAndGet();
     }
 
+    public void leaderTakeover(String namespace) {
+        leaderTakeover();
+    }
+
     public void timeout() {
         timeouts.incrementAndGet();
+    }
+
+    public void timeout(String namespace) {
+        timeout();
     }
 
     /** A result was computed but deliberately not cached because it was too big. */
@@ -55,9 +83,17 @@ public class CoalesceMetrics {
         payloadsTooLarge.incrementAndGet();
     }
 
+    public void payloadTooLarge(String namespace) {
+        payloadTooLarge();
+    }
+
     /** An annotated call ran straight through because the runtime toggle is off. */
     public void bypass() {
         bypassed.incrementAndGet();
+    }
+
+    public void bypass(String namespace) {
+        bypass();
     }
 
     public Map<String, Long> snapshot() {

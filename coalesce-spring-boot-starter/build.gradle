@@ -24,6 +24,9 @@ dependencies {
     api 'com.fasterxml.jackson.core:jackson-databind'
     api "org.redisson:redisson:${redissonVersion}"
 
+    // Optional Micrometer integration. compileOnly keeps it off every consumer's dependency graph.
+    compileOnly 'io.micrometer:micrometer-core'
+
     // Consumers never reference these directly.
     implementation 'org.springframework:spring-aop'
     implementation 'org.springframework:spring-expression'
@@ -46,6 +49,7 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.micrometer:micrometer-core'
     testImplementation 'io.projectreactor:reactor-test'
     // On the test classpath only, so the Actuator endpoint's auto-configuration is exercised.
     testImplementation 'org.springframework.boot:spring-boot-starter-actuator'

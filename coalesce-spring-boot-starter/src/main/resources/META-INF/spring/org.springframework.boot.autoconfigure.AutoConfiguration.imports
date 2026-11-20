@@ -2,3 +2,4 @@ net.bitsar.coalesce.autoconfigure.CoalesceRedissonAutoConfiguration
 net.bitsar.coalesce.autoconfigure.CoalesceAutoConfiguration
 net.bitsar.coalesce.autoconfigure.CoalesceWebFluxAutoConfiguration
 net.bitsar.coalesce.autoconfigure.CoalesceActuatorAutoConfiguration
+net.bitsar.coalesce.autoconfigure.CoalesceMicrometerAutoConfiguration
